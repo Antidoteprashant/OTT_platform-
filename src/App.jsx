@@ -2,6 +2,57 @@ import { useState } from 'react'
 import { Play, Tv, Smartphone, ChevronRight, ArrowRight, CheckCircle } from 'lucide-react'
 import './index.css'
 
+const loadRazorpay = () => {
+  return new Promise((resolve) => {
+    const script = document.createElement('script')
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js'
+    script.onload = () => resolve(true)
+    script.onerror = () => resolve(false)
+    document.body.appendChild(script)
+  })
+}
+
+const handlePayment = async (amount = 500, itemName = 'Subscription') => {
+  const res = await loadRazorpay()
+  if (!res) {
+    alert('Razorpay SDK failed to load. Are you online?')
+    return
+  }
+
+  // Convert amount to the smallest currency unit (e.g. paise for INR)
+  const amountInPaise = Math.round(parseFloat(amount) * 100)
+
+  const options = {
+    key: 'rzp_test_YOUR_KEY_HERE', // TODO: Replace with your actual Razorpay Key ID
+    amount: amountInPaise,
+    currency: 'INR',
+    name: 'GLITCH.tv',
+    description: `Payment for ${itemName}`,
+    handler: function (response) {
+      alert(`Payment Successful! Payment ID: ${response.razorpay_payment_id}`)
+    },
+    prefill: {
+      name: 'User Name',
+      email: 'user@example.com',
+      contact: '9999999999'
+    },
+    theme: {
+      color: '#8B4513'
+    }
+  }
+
+  if (options.key === 'rzp_test_YOUR_KEY_HERE') {
+    alert('Please insert your actual Razorpay Test Key in App.jsx (line 24) to see the checkout popup.')
+    return
+  }
+
+  const paymentObject = new window.Razorpay(options)
+  paymentObject.on('payment.failed', function (response) {
+    alert(`Payment Failed! Reason: ${response.error.description}`)
+  })
+  paymentObject.open()
+}
+
 // ─── Shared service data (acts as mock DB — admin can CRUD this array) ───────
 const SERVICES = [
   {
@@ -87,11 +138,11 @@ function Hero() {
   return (
     <section style={{ paddingTop: '8rem', paddingBottom: '4rem', position: 'relative' }}>
       <div className="container">
-        <div className="glass-panel" style={{ padding: '4rem 3rem', display: 'flex', flexDirection: 'column', gap: '2rem', position: 'relative', overflow: 'hidden' }}>
-          <div style={{ position: 'absolute', right: '-10%', top: '-20%', width: '300px', height: '300px', background: 'var(--primary)', filter: 'blur(100px)', opacity: 0.15, borderRadius: '50%' }}></div>
+        <div className="glass-panel" style={{ padding: '4rem 3rem', display: 'flex', flexDirection: 'column', gap: '2rem', position: 'relative', overflow: 'hidden', background: 'rgba(139, 69, 19, 0.08)', border: '1px solid rgba(139, 69, 19, 0.2)' }}>
+          <div style={{ position: 'absolute', right: '-10%', top: '-20%', width: '300px', height: '300px', background: '#8B4513', filter: 'blur(100px)', opacity: 0.2, borderRadius: '50%' }}></div>
 
           <div style={{ maxWidth: '600px', zIndex: 1 }}>
-            <div style={{ display: 'inline-block', padding: '0.25rem 0.75rem', borderRadius: '999px', background: 'rgba(184, 204, 193, 0.3)', border: '1px solid rgba(184, 204, 193, 0.5)', fontSize: '0.85rem', marginBottom: '1.5rem', color: 'var(--primary)' }}>
+            <div style={{ display: 'inline-block', padding: '0.25rem 0.75rem', borderRadius: '999px', background: 'rgba(139, 69, 19, 0.15)', border: '1px solid rgba(139, 69, 19, 0.3)', fontSize: '0.85rem', marginBottom: '1.5rem', color: '#8B4513', fontWeight: 'bold' }}>
               🎉 New Season Premiere
             </div>
             <h1 style={{ fontSize: '4.5rem', marginBottom: '1rem', letterSpacing: '-0.02em' }}>
@@ -101,10 +152,10 @@ function Hero() {
               Stream unlimited movies and TV shows on your phone, tablet, laptop, and TV. Cancel anytime.
             </p>
             <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-              <button className="btn btn-primary animate-pulse-glow" style={{ gap: '0.5rem' }}>
+              <button className="btn btn-primary animate-pulse-glow" style={{ gap: '0.5rem', background: '#8B4513', boxShadow: '0 4px 15px rgba(139, 69, 19, 0.3)' }}>
                 <Play color="white" fill="white" size={18} /> Start Free Trial
               </button>
-              <a href="#plans" className="btn btn-glass" style={{ textDecoration: 'none' }}>View Plans</a>
+              <a href="#plans" className="btn btn-glass" style={{ textDecoration: 'none', color: '#8B4513', borderColor: '#8B4513' }}>View Plans</a>
             </div>
           </div>
         </div>
@@ -219,10 +270,8 @@ function ServiceCard({ service }) {
       </ul>
 
       {/* CTA */}
-      <a
-        href="https://forms.gle/7EeHafuYJnHt7ZtB6"
-        target="_blank"
-        rel="noopener noreferrer"
+      <button
+        onClick={() => handlePayment(499, service.name)}
         style={{
           marginTop: 'auto',
           width: '100%',
@@ -249,7 +298,7 @@ function ServiceCard({ service }) {
         }}
       >
         Book Now <ArrowRight size={16} />
-      </a>
+      </button>
     </div>
   )
 }
@@ -358,14 +407,13 @@ function Pricing() {
                 <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}><Smartphone size={18} color="var(--primary)"/> {plan.devices} Devices</li>
               </ul>
 
-              <a href="https://forms.gle/7EeHafuYJnHt7ZtB6" target="_blank" rel="noopener noreferrer" className={`btn ${plan.popular ? 'btn-primary' : 'btn-glass'}`} style={{ width: '100%', textDecoration: 'none' }}>Select Plan</a>
+              <button onClick={() => handlePayment(plan.price, plan.name)} className={`btn ${plan.popular ? 'btn-primary' : 'btn-glass'}`} style={{ width: '100%', textDecoration: 'none', fontFamily: 'inherit', fontSize: '1rem', cursor: 'pointer' }}>Select Plan</button>
             </div>
           ))}
         </div>
 
         {/* Important Note */}
         <div style={{
-          marginTop: '4rem',
           padding: '2rem',
           background: 'var(--glass-bg)',
           backdropFilter: 'blur(12px)',
@@ -373,7 +421,7 @@ function Pricing() {
           borderRadius: '16px',
           textAlign: 'center',
           maxWidth: '800px',
-          margin: '4rem auto 0',
+          margin: '3rem auto 0',
           boxShadow: '0 10px 30px rgba(0,0,0,0.05)'
         }}>
           <h4 style={{ color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '1rem', fontSize: '1.25rem' }}>
@@ -395,7 +443,7 @@ function Pricing() {
 
 function Footer() {
   return (
-    <footer style={{ borderTop: '1px solid var(--glass-border)', padding: '4rem 0 2rem 0', marginTop: '4rem' }}>
+    <footer style={{ borderTop: '1px solid var(--glass-border)', padding: '3rem 0 2rem 0', marginTop: '1rem' }}>
       <div className="container">
         <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '2rem', marginBottom: '4rem' }}>
           <div>
