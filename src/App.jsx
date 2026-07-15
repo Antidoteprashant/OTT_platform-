@@ -11,7 +11,7 @@ const ANIME_LIST = [
     badge: 'Animecupa',
     color: '#8B0000',
     bgGradient: 'linear-gradient(135deg, #2b0000, #8B0000)',
-    poster: 'https://m.media-amazon.com/images/M/MV5BNDFjYTIxMjctYTQ2ZC00OGQ4LWE3OGYtNDdiMzNiNDZlMDAwXkEyXkFqcGdeQXVyNzI3NjY3NjQ@._V1_FMjpg_UX1000_.jpg',
+    poster: 'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx16498-m5ZMNtFiG7ng.png',
     rating: '9.0/10',
     episodes: '89 Episodes'
   },
@@ -22,7 +22,7 @@ const ANIME_LIST = [
     badge: 'Popular',
     color: '#00A8E1',
     bgGradient: 'linear-gradient(135deg, #004d66, #00A8E1)',
-    poster: 'https://m.media-amazon.com/images/M/MV5BODI2NjdlYWItMTE1ZC00YzI2LTgwZGQtOWIzNDY1NDc1YmQxXkEyXkFqcGdeQXVyMjc2Nzg5OTQ@._V1_FMjpg_UX1000_.jpg',
+    poster: 'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101922-PEn1CTc93DQl.jpg',
     rating: '8.7/10',
     episodes: '55 Episodes'
   },
@@ -33,7 +33,7 @@ const ANIME_LIST = [
     badge: 'Trending',
     color: '#0f3cc9',
     bgGradient: 'linear-gradient(135deg, #061957, #0f3cc9)',
-    poster: 'https://m.media-amazon.com/images/M/MV5BNGY4MTg3NzgtNjAwZa00ZjRmLThhZjktNjUwYTY1ZTQ4NjY5XkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_FMjpg_UX1000_.jpg',
+    poster: 'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx113415-bbBWj4pEFseh.jpg',
     rating: '8.5/10',
     episodes: '47 Episodes'
   },
@@ -44,7 +44,7 @@ const ANIME_LIST = [
     badge: 'Classic',
     color: '#FF0000',
     bgGradient: 'linear-gradient(135deg, #660000, #FF0000)',
-    poster: 'https://m.media-amazon.com/images/M/MV5BODcwNWE3OTMtMDc3MS00NDFjLWE1OTAtNDU3NjgxODMxY2UyXkEyXkFqcGdeQXVyNTAyODkwOQ@@._V1_FMjpg_UX1000_.jpg',
+    poster: 'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21-YCDignzx8joX.jpg',
     rating: '8.9/10',
     episodes: '1000+ Episodes'
   },
@@ -70,14 +70,14 @@ function Hero() {
   return (
     <section style={{ paddingTop: '8rem', paddingBottom: '4rem', position: 'relative' }}>
       <div className="container">
-        <div className="glass-panel" style={{ padding: '4rem 3rem', display: 'flex', flexDirection: 'column', gap: '2rem', position: 'relative', overflow: 'hidden', background: 'rgba(229, 9, 20, 0.08)', border: '1px solid rgba(229, 9, 20, 0.2)' }}>
+        <div className="glass-panel hero-panel" style={{ display: 'flex', flexDirection: 'column', gap: '2rem', position: 'relative', overflow: 'hidden', background: 'rgba(229, 9, 20, 0.08)', border: '1px solid rgba(229, 9, 20, 0.2)' }}>
           <div style={{ position: 'absolute', right: '-10%', top: '-20%', width: '300px', height: '300px', background: '#E50914', filter: 'blur(100px)', opacity: 0.2, borderRadius: '50%' }}></div>
 
           <div style={{ maxWidth: '600px', zIndex: 1 }}>
             <div style={{ display: 'inline-block', padding: '0.25rem 0.75rem', borderRadius: '999px', background: 'rgba(229, 9, 20, 0.15)', border: '1px solid rgba(229, 9, 20, 0.3)', fontSize: '0.85rem', marginBottom: '1.5rem', color: '#E50914', fontWeight: 'bold' }}>
               🔥 Fall 2026 Season is Here
             </div>
-            <h1 style={{ fontSize: '4.5rem', marginBottom: '1rem', letterSpacing: '-0.02em' }}>
+            <h1 className="hero-title" style={{ marginBottom: '1rem', letterSpacing: '-0.02em' }}>
               Your Ultimate <br/><span className="text-gradient">Anime</span> Hub
             </h1>
             <p style={{ color: 'var(--text-muted)', fontSize: '1.25rem', marginBottom: '2.5rem', lineHeight: 1.6 }}>
