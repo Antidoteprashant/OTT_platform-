@@ -87,8 +87,8 @@ function Hero() {
             </div>
             
             <h1 className="hero-title" style={{ marginBottom: '1.5rem', letterSpacing: '-0.02em', color: '#ffffff', lineHeight: 1.1, fontSize: '5.5rem', textShadow: '0 4px 20px rgba(0,0,0,0.6)' }}>
-              Your Ultimate <br />
-              <span style={{ color: '#E50914', textShadow: '0 0 45px rgba(229,9,20,0.8)' }}>Anime</span> Hub
+              Anime, Uncut. <br />
+              <span style={{ color: '#E50914', textShadow: '0 0 45px rgba(229,9,20,0.8)' }}>Uncensored.</span>
             </h1>
             
             <p style={{ color: '#e2e8f0', fontSize: '1.3rem', marginBottom: '3.5rem', lineHeight: 1.6, maxWidth: '540px', fontWeight: 500, textShadow: '0 2px 10px rgba(0,0,0,0.8)' }}>
