@@ -68,27 +68,54 @@ function Navbar() {
 
 function Hero() {
   return (
-    <section style={{ paddingTop: '8rem', paddingBottom: '4rem', position: 'relative' }}>
-      <div className="container">
-        <div className="glass-panel hero-panel" style={{ display: 'flex', flexDirection: 'column', gap: '2rem', position: 'relative', overflow: 'hidden', background: 'rgba(229, 9, 20, 0.08)', border: '1px solid rgba(229, 9, 20, 0.2)' }}>
-          <div style={{ position: 'absolute', right: '-10%', top: '-20%', width: '300px', height: '300px', background: '#E50914', filter: 'blur(100px)', opacity: 0.2, borderRadius: '50%' }}></div>
+    <section style={{ paddingTop: '10rem', paddingBottom: '0rem', position: 'relative', overflow: 'hidden' }}>
+      <div className="container" style={{ position: 'relative', zIndex: 2 }}>
+        <div style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '3rem',
+          alignItems: 'center',
+          justifyContent: 'space-between'
+        }}>
+          {/* Left Column: Text */}
+          <div style={{ flex: '1 1 500px', zIndex: 2, padding: '2rem 0 8rem 0', position: 'relative' }}>
+             {/* Subtle glow behind text for readability over manga background */}
+            <div style={{ position: 'absolute', top: '45%', left: '30%', transform: 'translate(-50%, -50%)', width: '180%', height: '180%', background: 'radial-gradient(circle, rgba(15,23,42,0.95) 0%, rgba(15,23,42,0.7) 35%, transparent 65%)', zIndex: -1, pointerEvents: 'none' }}></div>
 
-          <div style={{ maxWidth: '600px', zIndex: 1 }}>
-            <div style={{ display: 'inline-block', padding: '0.25rem 0.75rem', borderRadius: '999px', background: 'rgba(229, 9, 20, 0.15)', border: '1px solid rgba(229, 9, 20, 0.3)', fontSize: '0.85rem', marginBottom: '1.5rem', color: '#E50914', fontWeight: 'bold' }}>
-              🔥 Fall 2026 Season is Here
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.6rem', padding: '0.5rem 1.5rem', borderRadius: '999px', background: 'rgba(229, 9, 20, 0.95)', color: '#fff', fontSize: '0.9rem', marginBottom: '2.5rem', fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', boxShadow: '0 10px 25px rgba(229,9,20,0.4)' }}>
+              🔥 Fall 2026 Simulcasts
             </div>
-            <h1 className="hero-title" style={{ marginBottom: '1rem', letterSpacing: '-0.02em' }}>
-              Your Ultimate <br/><span className="text-gradient">Anime</span> Hub
+            
+            <h1 className="hero-title" style={{ marginBottom: '1.5rem', letterSpacing: '-0.02em', color: '#ffffff', lineHeight: 1.1, fontSize: '5.5rem', textShadow: '0 4px 20px rgba(0,0,0,0.6)' }}>
+              Your Ultimate <br />
+              <span style={{ color: '#E50914', textShadow: '0 0 45px rgba(229,9,20,0.8)' }}>Anime</span> Hub
             </h1>
-            <p style={{ color: 'var(--text-muted)', fontSize: '1.25rem', marginBottom: '2.5rem', lineHeight: 1.6 }}>
-              Stream the latest episodes of your favorite anime series. Uncensored, subbed, and dubbed options available.
+            
+            <p style={{ color: '#e2e8f0', fontSize: '1.3rem', marginBottom: '3.5rem', lineHeight: 1.6, maxWidth: '540px', fontWeight: 500, textShadow: '0 2px 10px rgba(0,0,0,0.8)' }}>
+              Stream the latest episodes of your favorite anime series in stunning HD. Uncensored, subbed, and dubbed options available.
             </p>
-            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-              <button className="btn btn-primary animate-pulse-glow" style={{ gap: '0.5rem', background: '#E50914', boxShadow: '0 4px 15px rgba(229, 9, 20, 0.3)' }}>
-                <Play color="white" fill="white" size={18} /> Start Watching
+            
+            <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+              <button className="btn btn-primary animate-pulse-glow" style={{ gap: '0.5rem', background: '#E50914', border: 'none', color: '#ffffff', fontSize: '1.1rem', padding: '1rem 2.5rem', borderRadius: '50px', boxShadow: '0 10px 25px rgba(229, 9, 20, 0.5)', fontWeight: 800 }}>
+                <Play color="white" fill="white" size={20} /> Start Watching
               </button>
-              <a href="#trending" className="btn btn-glass" style={{ textDecoration: 'none', color: '#E50914', borderColor: '#E50914' }}>Explore Anime</a>
+              <a href="#trending" className="btn" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', color: '#ffffff', border: '2px solid rgba(255,255,255,0.3)', background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(10px)', fontSize: '1.1rem', padding: '1rem 2.5rem', borderRadius: '50px', fontWeight: 800, transition: 'all 0.2s' }}>
+                Explore Anime
+              </a>
             </div>
+          </div>
+
+          {/* Right Column: Giant Character Cutout */}
+          <div style={{ flex: '1 1 400px', display: 'flex', justifyContent: 'flex-end', position: 'relative', minHeight: '600px', pointerEvents: 'none' }}>
+             <img src="/character.png" alt="Anime Character" className="animate-float" style={{ 
+               height: '120%', 
+               objectFit: 'contain', 
+               position: 'absolute', 
+               bottom: '-2rem', 
+               right: '-5%', 
+               filter: 'drop-shadow(-15px 25px 35px rgba(0,0,0,0.7))',
+               zIndex: 5
+             }} />
           </div>
         </div>
       </div>
@@ -183,13 +210,17 @@ function AnimeCard({ anime }) {
 
       {/* stats list */}
       <ul style={{ listStyle: 'none', display: 'flex', justifyContent: 'space-between', gap: '0.5rem', marginTop: '0.5rem' }}>
-        <li style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.85rem',
-          color: hovered ? 'rgba(255,255,255,0.9)' : 'var(--text-main)', fontWeight: 600 }}>
+        <li style={{
+          display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.85rem',
+          color: hovered ? 'rgba(255,255,255,0.9)' : 'var(--text-main)', fontWeight: 600
+        }}>
           <Star size={14} color={hovered ? '#FFD700' : '#FFD700'} fill="#FFD700" />
           {anime.rating}
         </li>
-        <li style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.85rem',
-          color: hovered ? 'rgba(255,255,255,0.85)' : 'var(--text-muted)' }}>
+        <li style={{
+          display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.85rem',
+          color: hovered ? 'rgba(255,255,255,0.85)' : 'var(--text-muted)'
+        }}>
           {anime.episodes}
         </li>
       </ul>
@@ -228,10 +259,12 @@ function TrendingAnime() {
       <div className="container">
         <div style={{ marginBottom: '3.5rem' }}>
           <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
-            <div style={{ display: 'inline-block', padding: '0.3rem 1rem', borderRadius: '999px',
+            <div style={{
+              display: 'inline-block', padding: '0.3rem 1rem', borderRadius: '999px',
               background: 'rgba(229,9,20,0.1)', border: '1px solid rgba(229,9,20,0.25)',
               fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.1em', color: '#E50914',
-              marginBottom: '1rem', textTransform: 'uppercase' }}>
+              marginBottom: '1rem', textTransform: 'uppercase'
+            }}>
               Trending Now
             </div>
           </div>
@@ -282,7 +315,7 @@ function AnimeNews() {
           <h2 style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>Anime <span className="text-gradient" style={{ backgroundImage: 'linear-gradient(135deg, #E50914, #ff6b6b)' }}>News</span></h2>
           <p style={{ color: 'var(--text-muted)' }}>Stay updated with the latest in the anime world.</p>
         </div>
-        
+
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
           {news.map((item, i) => (
             <div key={i} className="glass-card animate-float" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem', animationDelay: `${i * 0.15}s` }}>
