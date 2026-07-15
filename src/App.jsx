@@ -11,7 +11,7 @@ const ANIME_LIST = [
     badge: 'Animecupa',
     color: '#8B0000',
     bgGradient: 'linear-gradient(135deg, #2b0000, #8B0000)',
-    poster: 'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx16498-m5ZMNtFiG7ng.png',
+    poster: '/aot.jpg',
     rating: '9.0/10',
     episodes: '89 Episodes'
   },
@@ -22,7 +22,7 @@ const ANIME_LIST = [
     badge: 'Popular',
     color: '#00A8E1',
     bgGradient: 'linear-gradient(135deg, #004d66, #00A8E1)',
-    poster: 'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx101922-PEn1CTc93DQl.jpg',
+    poster: '/demon.jpg',
     rating: '8.7/10',
     episodes: '55 Episodes'
   },
@@ -33,7 +33,7 @@ const ANIME_LIST = [
     badge: 'Trending',
     color: '#0f3cc9',
     bgGradient: 'linear-gradient(135deg, #061957, #0f3cc9)',
-    poster: 'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx113415-bbBWj4pEFseh.jpg',
+    poster: '/jujutsu.jpg',
     rating: '8.5/10',
     episodes: '47 Episodes'
   },
@@ -44,7 +44,7 @@ const ANIME_LIST = [
     badge: 'Classic',
     color: '#FF0000',
     bgGradient: 'linear-gradient(135deg, #660000, #FF0000)',
-    poster: 'https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx21-YCDignzx8joX.jpg',
+    poster: '/onepiece.jpg',
     rating: '8.9/10',
     episodes: '1000+ Episodes'
   },
