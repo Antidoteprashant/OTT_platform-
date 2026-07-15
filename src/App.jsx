@@ -1,118 +1,52 @@
 import { useState } from 'react'
-import { Play, Tv, Smartphone, ChevronRight, ArrowRight, CheckCircle } from 'lucide-react'
+import { Play, Info, ChevronRight, ArrowRight, Star } from 'lucide-react'
 import './index.css'
 
-const loadRazorpay = () => {
-  return new Promise((resolve) => {
-    const script = document.createElement('script')
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js'
-    script.onload = () => resolve(true)
-    script.onerror = () => resolve(false)
-    document.body.appendChild(script)
-  })
-}
-
-const handlePayment = async (amount = 500, itemName = 'Subscription') => {
-  const res = await loadRazorpay()
-  if (!res) {
-    alert('Razorpay SDK failed to load. Are you online?')
-    return
-  }
-
-  // Convert amount to the smallest currency unit (e.g. paise for INR)
-  const amountInPaise = Math.round(parseFloat(amount) * 100)
-
-  const options = {
-    key: 'rzp_test_YOUR_KEY_HERE', // TODO: Replace with your actual Razorpay Key ID
-    amount: amountInPaise,
-    currency: 'INR',
-    name: 'GLITCH.tv',
-    description: `Payment for ${itemName}`,
-    handler: function (response) {
-      alert(`Payment Successful! Payment ID: ${response.razorpay_payment_id}`)
-    },
-    prefill: {
-      name: 'User Name',
-      email: 'user@example.com',
-      contact: '9999999999'
-    },
-    theme: {
-      color: '#8B4513'
-    }
-  }
-
-  if (options.key === 'rzp_test_YOUR_KEY_HERE') {
-    alert('Please insert your actual Razorpay Test Key in App.jsx (line 24) to see the checkout popup.')
-    return
-  }
-
-  const paymentObject = new window.Razorpay(options)
-  paymentObject.on('payment.failed', function (response) {
-    alert(`Payment Failed! Reason: ${response.error.description}`)
-  })
-  paymentObject.open()
-}
-
-// ─── Shared service data (acts as mock DB — admin can CRUD this array) ───────
-const SERVICES = [
+// ─── Shared anime data ───────
+const ANIME_LIST = [
   {
     id: 1,
-    name: 'Netflix',
-    description: 'Subscription support, account setup & plan upgrades for Netflix.',
-    badge: 'Most Popular',
-    color: '#E50914',
-    bgGradient: 'linear-gradient(135deg, #E50914, #831010)',
-    logo: (
-      <svg viewBox="0 0 111 30" width="80" height="22" fill="#E50914">
-        <path d="M105.06 0l-8.1 23.01L88.88 0H78.9l12.78 30-12.78 30h9.98l8.08-23.01L105.06 60h9.98L102.26 30 115.04 0zM0 0v60h9.98V0zm14.97 0v60h9.98V0zM29.94 0v60h9.98V0zm14.96 0v60h9.98V37.5L60.84 0zm0 0" />
-      </svg>
-    ),
-    logoText: 'NETFLIX',
-    logoStyle: { color: '#E50914', fontSize: '1.6rem', fontWeight: 900, letterSpacing: '-0.02em', fontStyle: 'italic' },
+    name: 'Attack on Titan',
+    description: 'Humanity fights for survival against man-eating giants in a walled city.',
+    badge: 'Animecupa',
+    color: '#8B0000',
+    bgGradient: 'linear-gradient(135deg, #2b0000, #8B0000)',
+    poster: 'https://m.media-amazon.com/images/M/MV5BNDFjYTIxMjctYTQ2ZC00OGQ4LWE3OGYtNDdiMzNiNDZlMDAwXkEyXkFqcGdeQXVyNzI3NjY3NjQ@._V1_FMjpg_UX1000_.jpg',
+    rating: '9.0/10',
+    episodes: '89 Episodes'
   },
   {
     id: 2,
-    name: 'Amazon Prime',
-    description: 'Prime Video account assistance, billing support & content access.',
-    badge: '',
+    name: 'Demon Slayer',
+    description: 'A young man journeys to seek a cure for his demon-cursed sister.',
+    badge: 'Popular',
     color: '#00A8E1',
-    bgGradient: 'linear-gradient(135deg, #00A8E1, #005F8A)',
-    logo: null,
-    logoText: 'prime video',
-    logoStyle: { color: '#00A8E1', fontSize: '1.1rem', fontWeight: 700, letterSpacing: '0.02em' },
+    bgGradient: 'linear-gradient(135deg, #004d66, #00A8E1)',
+    poster: 'https://m.media-amazon.com/images/M/MV5BODI2NjdlYWItMTE1ZC00YzI2LTgwZGQtOWIzNDY1NDc1YmQxXkEyXkFqcGdeQXVyMjc2Nzg5OTQ@._V1_FMjpg_UX1000_.jpg',
+    rating: '8.7/10',
+    episodes: '55 Episodes'
   },
   {
     id: 3,
-    name: 'JioHotstar',
-    description: 'JioHotstar subscription plans, offers & streaming support.',
-    badge: '',
+    name: 'Jujutsu Kaisen',
+    description: 'A boy swallows a cursed talisman and becomes a curse himself to save his friends.',
+    badge: 'Trending',
     color: '#0f3cc9',
-    bgGradient: 'linear-gradient(135deg, #0f3cc9, #e8171e)',
-    logo: null,
-    logoText: 'JioHotstar',
-    logoStyle: { color: '#0f3cc9', fontSize: '1.3rem', fontWeight: 800 },
+    bgGradient: 'linear-gradient(135deg, #061957, #0f3cc9)',
+    poster: 'https://m.media-amazon.com/images/M/MV5BNGY4MTg3NzgtNjAwZa00ZjRmLThhZjktNjUwYTY1ZTQ4NjY5XkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_FMjpg_UX1000_.jpg',
+    rating: '8.5/10',
+    episodes: '47 Episodes'
   },
   {
     id: 4,
-    name: 'YouTube',
-    description: 'YouTube Premium setup, family plans & ad-free streaming help.',
-    badge: '',
+    name: 'One Piece',
+    description: 'Monkey D. Luffy sets off on an adventure to find the legendary One Piece treasure.',
+    badge: 'Classic',
     color: '#FF0000',
-    bgGradient: 'linear-gradient(135deg, #FF0000, #8B0000)',
-    logo: null,
-    logoText: 'YouTube',
-    logoStyle: { color: '#FF0000', fontSize: '1.4rem', fontWeight: 700 },
-  },
-  {
-    id: 5,
-    name: 'Spotify',
-    description: 'Spotify subscription, duo/family plans & payment assistance.',
-    badge: 'New',
-    color: '#1DB954',
-    bgGradient: 'linear-gradient(135deg, #1DB954, #1565C0)',
-    logo: null,
-    logoText: 'Spotify',
-    logoStyle: { color: '#1DB954', fontSize: '1.4rem', fontWeight: 700 },
+    bgGradient: 'linear-gradient(135deg, #660000, #FF0000)',
+    poster: 'https://m.media-amazon.com/images/M/MV5BODcwNWE3OTMtMDc3MS00NDFjLWE1OTAtNDU3NjgxODMxY2UyXkEyXkFqcGdeQXVyNTAyODkwOQ@@._V1_FMjpg_UX1000_.jpg',
+    rating: '8.9/10',
+    episodes: '1000+ Episodes'
   },
 ]
 
@@ -121,13 +55,11 @@ function Navbar() {
     <nav className="glass-nav" style={{ position: 'fixed', width: '100%', top: 0, zIndex: 50, padding: '1rem 0' }}>
       <div className="container flex-between">
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span style={{ fontSize: '1.5rem', fontWeight: 800, letterSpacing: '-0.05em' }}>GLITCH<span className="text-gradient">.tv</span></span>
+          <span style={{ fontSize: '1.5rem', fontWeight: 800, letterSpacing: '-0.05em' }}>Anime<span className="text-gradient">cupa</span></span>
         </div>
-
-
-
-
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <a href="#trending" style={{ color: 'var(--text-main)', textDecoration: 'none', fontWeight: 500 }}>Trending</a>
+          <a href="#news" style={{ color: 'var(--text-main)', textDecoration: 'none', fontWeight: 500 }}>News</a>
         </div>
       </div>
     </nav>
@@ -138,24 +70,24 @@ function Hero() {
   return (
     <section style={{ paddingTop: '8rem', paddingBottom: '4rem', position: 'relative' }}>
       <div className="container">
-        <div className="glass-panel" style={{ padding: '4rem 3rem', display: 'flex', flexDirection: 'column', gap: '2rem', position: 'relative', overflow: 'hidden', background: 'rgba(139, 69, 19, 0.08)', border: '1px solid rgba(139, 69, 19, 0.2)' }}>
-          <div style={{ position: 'absolute', right: '-10%', top: '-20%', width: '300px', height: '300px', background: '#8B4513', filter: 'blur(100px)', opacity: 0.2, borderRadius: '50%' }}></div>
+        <div className="glass-panel" style={{ padding: '4rem 3rem', display: 'flex', flexDirection: 'column', gap: '2rem', position: 'relative', overflow: 'hidden', background: 'rgba(229, 9, 20, 0.08)', border: '1px solid rgba(229, 9, 20, 0.2)' }}>
+          <div style={{ position: 'absolute', right: '-10%', top: '-20%', width: '300px', height: '300px', background: '#E50914', filter: 'blur(100px)', opacity: 0.2, borderRadius: '50%' }}></div>
 
           <div style={{ maxWidth: '600px', zIndex: 1 }}>
-            <div style={{ display: 'inline-block', padding: '0.25rem 0.75rem', borderRadius: '999px', background: 'rgba(139, 69, 19, 0.15)', border: '1px solid rgba(139, 69, 19, 0.3)', fontSize: '0.85rem', marginBottom: '1.5rem', color: '#8B4513', fontWeight: 'bold' }}>
-              🎉 New Season Premiere
+            <div style={{ display: 'inline-block', padding: '0.25rem 0.75rem', borderRadius: '999px', background: 'rgba(229, 9, 20, 0.15)', border: '1px solid rgba(229, 9, 20, 0.3)', fontSize: '0.85rem', marginBottom: '1.5rem', color: '#E50914', fontWeight: 'bold' }}>
+              🔥 Fall 2026 Season is Here
             </div>
             <h1 style={{ fontSize: '4.5rem', marginBottom: '1rem', letterSpacing: '-0.02em' }}>
-              Experience <br/><span className="text-gradient">Cinematic</span> Magic
+              Your Ultimate <br/><span className="text-gradient">Anime</span> Hub
             </h1>
             <p style={{ color: 'var(--text-muted)', fontSize: '1.25rem', marginBottom: '2.5rem', lineHeight: 1.6 }}>
-              Stream unlimited movies and TV shows on your phone, tablet, laptop, and TV. Cancel anytime.
+              Stream the latest episodes of your favorite anime series. Uncensored, subbed, and dubbed options available.
             </p>
             <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-              <button className="btn btn-primary animate-pulse-glow" style={{ gap: '0.5rem', background: '#8B4513', boxShadow: '0 4px 15px rgba(139, 69, 19, 0.3)' }}>
-                <Play color="white" fill="white" size={18} /> Start Free Trial
+              <button className="btn btn-primary animate-pulse-glow" style={{ gap: '0.5rem', background: '#E50914', boxShadow: '0 4px 15px rgba(229, 9, 20, 0.3)' }}>
+                <Play color="white" fill="white" size={18} /> Start Watching
               </button>
-              <a href="#plans" className="btn btn-glass" style={{ textDecoration: 'none', color: '#8B4513', borderColor: '#8B4513' }}>View Plans</a>
+              <a href="#trending" className="btn btn-glass" style={{ textDecoration: 'none', color: '#E50914', borderColor: '#E50914' }}>Explore Anime</a>
             </div>
           </div>
         </div>
@@ -164,8 +96,7 @@ function Hero() {
   )
 }
 
-// ─── Services / Platform Cards ────────────────────────────────────────────────
-function ServiceCard({ service }) {
+function AnimeCard({ anime }) {
   const [hovered, setHovered] = useState(false)
 
   return (
@@ -175,17 +106,17 @@ function ServiceCard({ service }) {
       onMouseLeave={() => setHovered(false)}
       style={{
         position: 'relative',
-        background: hovered ? service.bgGradient : 'rgba(255,255,255,0.95)',
-        border: hovered ? `1px solid ${service.color}` : '1px solid #E2E8F0',
+        background: hovered ? anime.bgGradient : 'rgba(255,255,255,0.95)',
+        border: hovered ? `1px solid ${anime.color}` : '1px solid #E2E8F0',
         borderRadius: '24px',
-        padding: '2rem',
+        padding: '1.5rem',
         display: 'flex',
         flexDirection: 'column',
-        gap: '1.25rem',
+        gap: '1rem',
         transition: 'all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
         transform: hovered ? 'scale(1.05) translateY(-8px)' : 'scale(1) translateY(0)',
         boxShadow: hovered
-          ? `0 25px 50px -12px ${service.color}55`
+          ? `0 25px 50px -12px ${anime.color}55`
           : '0 2px 12px rgba(0,0,0,0.06)',
         cursor: 'pointer',
         backdropFilter: 'blur(12px)',
@@ -193,93 +124,86 @@ function ServiceCard({ service }) {
       }}
     >
       {/* badge */}
-      {service.badge && (
+      {anime.badge && (
         <div style={{
-          position: 'absolute', top: '1rem', right: '1rem',
-          background: hovered ? 'rgba(255,255,255,0.25)' : 'rgba(184,204,193,0.3)',
-          color: hovered ? '#fff' : '#0F172A',
+          position: 'absolute', top: '1rem', right: '1rem', zIndex: 10,
+          background: hovered ? 'rgba(255,255,255,0.25)' : 'rgba(229,9,20,0.8)',
+          color: '#fff',
           padding: '0.25rem 0.75rem', borderRadius: '999px',
           fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.05em',
-          border: hovered ? '1px solid rgba(255,255,255,0.3)' : '1px solid rgba(184,204,193,0.5)',
+          border: hovered ? '1px solid rgba(255,255,255,0.3)' : '1px solid transparent',
           transition: 'all 0.35s ease',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
         }}>
-          {service.badge}
+          {anime.badge}
         </div>
       )}
 
-      {/* decorative glow blob */}
-      {hovered && (
-        <div style={{
-          position: 'absolute', top: '-40px', right: '-40px',
-          width: '120px', height: '120px', borderRadius: '50%',
-          background: 'rgba(255,255,255,0.12)', filter: 'blur(30px)',
-          pointerEvents: 'none',
-        }} />
-      )}
-
-      {/* logo area */}
+      {/* Poster area */}
       <div style={{
-        width: '72px', height: '72px', borderRadius: '20px',
-        background: hovered ? 'rgba(255,255,255,0.15)' : `${service.color}15`,
-        border: hovered ? '1px solid rgba(255,255,255,0.25)' : `1px solid ${service.color}30`,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        transition: 'all 0.35s ease',
-        backdropFilter: 'blur(4px)',
+        width: '100%', height: '320px', borderRadius: '16px',
+        backgroundImage: `url(${anime.poster})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        position: 'relative',
+        overflow: 'hidden'
       }}>
-        <span style={{
-          ...service.logoStyle,
-          color: hovered ? '#ffffff' : service.color,
-          fontSize: '0.85rem',
-          fontWeight: 900,
-          letterSpacing: '0.04em',
-        }}>
-          {service.logoText.slice(0, 2).toUpperCase()}
-        </span>
+        {/* overlay on hover */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: hovered ? 'rgba(0,0,0,0.2)' : 'transparent',
+          transition: 'all 0.3s'
+        }}></div>
       </div>
 
-      {/* platform name */}
+      {/* anime name */}
       <div>
         <h3 style={{
-          fontSize: '1.3rem',
+          fontSize: '1.4rem',
           fontWeight: 800,
           color: hovered ? '#ffffff' : '#0F172A',
           transition: 'color 0.3s ease',
           marginBottom: '0.25rem',
         }}>
-          {service.name}
+          {anime.name}
         </h3>
         <p style={{
           color: hovered ? 'rgba(255,255,255,0.8)' : 'var(--text-muted)',
           fontSize: '0.9rem',
-          lineHeight: 1.6,
+          lineHeight: 1.5,
           transition: 'color 0.3s ease',
+          display: '-webkit-box',
+          WebkitLineClamp: 2,
+          WebkitBoxOrient: 'vertical',
+          overflow: 'hidden'
         }}>
-          {service.description}
+          {anime.description}
         </p>
       </div>
 
-      {/* features list */}
-      <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-        {['Subscription Support', 'Account Setup', 'Payment Assistance'].map((feat) => (
-          <li key={feat} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem',
-            color: hovered ? 'rgba(255,255,255,0.85)' : 'var(--text-muted)', transition: 'color 0.3s ease' }}>
-            <CheckCircle size={14} color={hovered ? 'rgba(255,255,255,0.9)' : service.color} />
-            {feat}
-          </li>
-        ))}
+      {/* stats list */}
+      <ul style={{ listStyle: 'none', display: 'flex', justifyContent: 'space-between', gap: '0.5rem', marginTop: '0.5rem' }}>
+        <li style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.85rem',
+          color: hovered ? 'rgba(255,255,255,0.9)' : 'var(--text-main)', fontWeight: 600 }}>
+          <Star size={14} color={hovered ? '#FFD700' : '#FFD700'} fill="#FFD700" />
+          {anime.rating}
+        </li>
+        <li style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.85rem',
+          color: hovered ? 'rgba(255,255,255,0.85)' : 'var(--text-muted)' }}>
+          {anime.episodes}
+        </li>
       </ul>
 
       {/* CTA */}
       <button
-        onClick={() => handlePayment(499, service.name)}
         style={{
           marginTop: 'auto',
           width: '100%',
           padding: '0.75rem 1.5rem',
           borderRadius: '12px',
-          border: hovered ? '1px solid rgba(255,255,255,0.4)' : `1px solid ${service.color}`,
+          border: hovered ? '1px solid rgba(255,255,255,0.4)' : `1px solid ${anime.color}`,
           background: hovered ? 'rgba(255,255,255,0.2)' : 'transparent',
-          color: hovered ? '#ffffff' : service.color,
+          color: hovered ? '#ffffff' : anime.color,
           fontWeight: 700,
           fontSize: '0.95rem',
           cursor: 'pointer',
@@ -287,46 +211,37 @@ function ServiceCard({ service }) {
           transition: 'all 0.3s ease',
           backdropFilter: 'blur(4px)',
           fontFamily: 'inherit',
-          textDecoration: 'none',
-          boxSizing: 'border-box',
-        }}
-        onMouseEnter={e => {
-          e.currentTarget.style.background = hovered ? 'rgba(255,255,255,0.3)' : `${service.color}15`
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.background = hovered ? 'rgba(255,255,255,0.2)' : 'transparent'
         }}
       >
-        Book Now <ArrowRight size={16} />
+        Watch Now <Play size={16} fill={hovered ? '#ffffff' : anime.color} />
       </button>
     </div>
   )
 }
 
-function Services() {
+function TrendingAnime() {
   const [showAll, setShowAll] = useState(false)
-  const displayed = showAll ? SERVICES : SERVICES.slice(0, 4)
+  const displayed = showAll ? ANIME_LIST : ANIME_LIST.slice(0, 4)
 
   return (
-    <section id="services" style={{ padding: '5rem 0' }}>
+    <section id="trending" style={{ padding: '5rem 0' }}>
       <div className="container">
-        {/* Section Header */}
         <div style={{ marginBottom: '3.5rem' }}>
           <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
             <div style={{ display: 'inline-block', padding: '0.3rem 1rem', borderRadius: '999px',
-              background: 'rgba(56,189,248,0.1)', border: '1px solid rgba(56,189,248,0.25)',
-              fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.1em', color: '#0284c7',
+              background: 'rgba(229,9,20,0.1)', border: '1px solid rgba(229,9,20,0.25)',
+              fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.1em', color: '#E50914',
               marginBottom: '1rem', textTransform: 'uppercase' }}>
-              Our Services
+              Trending Now
             </div>
           </div>
           <div className="flex-between" style={{ flexWrap: 'wrap', gap: '1rem' }}>
             <div>
               <h2 style={{ fontSize: '2.75rem', fontWeight: 800, marginBottom: '0.5rem' }}>
-                One Platform, All Streams
+                Popular on Animecupa
               </h2>
               <p style={{ color: 'var(--text-muted)', maxWidth: '520px', lineHeight: 1.7, fontSize: '1.05rem' }}>
-                Get expert help for your favourite streaming platforms — subscriptions, setup, and beyond.
+                Discover the most watched and highest rated anime series this week.
               </p>
             </div>
             <button
@@ -339,14 +254,13 @@ function Services() {
           </div>
         </div>
 
-        {/* Cards Grid */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(270px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
           gap: '1.75rem',
         }}>
-          {displayed.map(service => (
-            <ServiceCard key={service.id} service={service} />
+          {displayed.map(anime => (
+            <AnimeCard key={anime.id} anime={anime} />
           ))}
         </div>
       </div>
@@ -354,92 +268,37 @@ function Services() {
   )
 }
 
-function Features() {
-  const features = [
-    { icon: <Tv size={32} color="var(--primary)"/>, title: 'Watch everywhere', desc: 'Stream on smart TVs, PlayStation, Xbox, Chromecast, Apple TV, Blu-ray players, and more.' },
-    { icon: <Smartphone size={32} color="var(--secondary)"/>, title: 'Download your shows', desc: 'Save your favorites easily and always have something to watch offline.' }
+function AnimeNews() {
+  const news = [
+    { title: "Demon Slayer Season 4 Officially Announced", date: "Jul 15, 2026", excerpt: "The highly anticipated Infinity Castle arc is coming to screens sooner than expected." },
+    { title: "Jujutsu Kaisen Manga Enters Final Arc", date: "Jul 10, 2026", excerpt: "Gege Akutami confirmed that the hit manga will conclude its epic story this year." },
+    { title: "Solo Leveling Anime Breaks Streaming Records", date: "Jul 5, 2026", excerpt: "The adaptation of the popular webtoon has shattered viewership records globally." }
   ]
 
   return (
-    <section style={{ padding: '4rem 0' }}>
-      <div className="container" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
-        {features.map((f, i) => (
-          <div key={i} className="glass-card" style={{ padding: '2.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <div style={{ padding: '1rem', background: 'rgba(241, 245, 249, 0.5)', borderRadius: '16px', width: 'fit-content', border: '1px solid #E2E8F0' }}>
-              {f.icon}
-            </div>
-            <h3 style={{ fontSize: '1.5rem' }}>{f.title}</h3>
-            <p style={{ color: 'var(--text-muted)', lineHeight: 1.6 }}>{f.desc}</p>
-          </div>
-        ))}
-      </div>
-    </section>
-  )
-}
-
-function Pricing() {
-  const plans = [
-    { name: 'Basic', price: '8.99', quality: '720p', devices: 1 },
-    { name: 'Standard', price: '13.99', quality: '1080p', devices: 2, popular: true },
-    { name: 'Premium', price: '19.99', quality: '4K + HDR', devices: 4 }
-  ]
-
-  return (
-    <section id="plans" style={{ padding: '4rem 0' }}>
+    <section id="news" style={{ padding: '4rem 0', background: 'rgba(241, 245, 249, 0.3)' }}>
       <div className="container">
-        <h2 style={{ textAlign: 'center', fontSize: '3rem', marginBottom: '3rem' }}>Choose your <span className="text-gradient">Plan</span></h2>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem', alignItems: 'center' }}>
-          {plans.map((plan, i) => (
-            <div key={i} className={`glass-card ${plan.popular ? 'animate-float' : ''}`} style={{ padding: '3rem 2rem', position: 'relative', border: plan.popular ? '1px solid var(--primary)' : '' }}>
-              {plan.popular && (
-                <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translate(-50%, -50%)', background: 'linear-gradient(135deg, var(--primary), var(--secondary))', color: 'white', padding: '0.5rem 1.5rem', borderRadius: '999px', fontSize: '0.85rem', fontWeight: 'bold' }}>
-                  Most Popular
-                </div>
-              )}
-              <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>{plan.name}</h3>
-              <div style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '2rem' }}>
-                ${plan.price}<span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 400 }}>/mo</span>
-              </div>
-
-              <ul style={{ listStyle: 'none', marginBottom: '2.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}><Tv size={18} color="var(--primary)"/> Quality: {plan.quality}</li>
-                <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}><Smartphone size={18} color="var(--primary)"/> {plan.devices} Devices</li>
-              </ul>
-
-              <button onClick={() => handlePayment(plan.price, plan.name)} className={`btn ${plan.popular ? 'btn-primary' : 'btn-glass'}`} style={{ width: '100%', textDecoration: 'none', fontFamily: 'inherit', fontSize: '1rem', cursor: 'pointer' }}>Select Plan</button>
+        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+          <h2 style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>Anime <span className="text-gradient" style={{ backgroundImage: 'linear-gradient(135deg, #E50914, #ff6b6b)' }}>News</span></h2>
+          <p style={{ color: 'var(--text-muted)' }}>Stay updated with the latest in the anime world.</p>
+        </div>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
+          {news.map((item, i) => (
+            <div key={i} className="glass-card animate-float" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem', animationDelay: `${i * 0.15}s` }}>
+              <span style={{ fontSize: '0.85rem', color: '#E50914', fontWeight: 'bold' }}>{item.date}</span>
+              <h3 style={{ fontSize: '1.25rem', lineHeight: 1.4 }}>{item.title}</h3>
+              <p style={{ color: 'var(--text-muted)', lineHeight: 1.6 }}>{item.excerpt}</p>
+              <button className="btn btn-glass" style={{ marginTop: 'auto', alignSelf: 'flex-start', padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                Read More <ArrowRight size={14} />
+              </button>
             </div>
           ))}
-        </div>
-
-        {/* Important Note */}
-        <div style={{
-          padding: '2rem',
-          background: 'var(--glass-bg)',
-          backdropFilter: 'blur(12px)',
-          border: '1px solid var(--glass-border)',
-          borderRadius: '16px',
-          textAlign: 'center',
-          maxWidth: '800px',
-          margin: '3rem auto 0',
-          boxShadow: '0 10px 30px rgba(0,0,0,0.05)'
-        }}>
-          <h4 style={{ color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '1rem', fontSize: '1.25rem' }}>
-            📌 IMPORTANT NOTE
-          </h4>
-          <p style={{ color: 'var(--text-main)', fontSize: '1.1rem', marginBottom: '0.75rem', fontWeight: 500 }}>
-            Your credentials will be sent via WhatsApp/Email within 24–48 hours of booking confirmation.
-          </p>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>
-            Didn't receive them on time? Please contact us immediately using the details below.
-          </p>
         </div>
       </div>
     </section>
   )
 }
-
-
 
 function Footer() {
   return (
@@ -448,17 +307,18 @@ function Footer() {
         <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '2rem', marginBottom: '4rem' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-              <span style={{ fontSize: '1.25rem', fontWeight: 800, letterSpacing: '-0.05em' }}>GLITCH<span className="text-gradient">.tv</span></span>
+              <span style={{ fontSize: '1.5rem', fontWeight: 800, letterSpacing: '-0.05em' }}>Anime<span className="text-gradient">cupa</span></span>
             </div>
-            <p style={{ color: 'var(--text-muted)', maxWidth: '300px' }}>The ultimate destination for premium streaming entertainment.</p>
+            <p style={{ color: 'var(--text-muted)', maxWidth: '300px' }}>Your ultimate destination for premium anime streaming and news.</p>
           </div>
 
           <div style={{ display: 'flex', gap: '4rem', flexWrap: 'wrap' }}>
             <div>
-              <h5 style={{ marginBottom: '1rem', fontSize: '1rem' }}>Company</h5>
+              <h5 style={{ marginBottom: '1rem', fontSize: '1rem' }}>Platform</h5>
               <ul style={{ listStyle: 'none', color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                <li>About</li>
-                <li>Contact</li>
+                <li>Trending</li>
+                <li>Simulcasts</li>
+                <li>News</li>
               </ul>
             </div>
             <div>
@@ -471,7 +331,7 @@ function Footer() {
           </div>
         </div>
         <div style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
-          &copy; 2026 GLITCH.tv. All rights reserved.
+          &copy; 2026 Animecupa. All rights reserved.
         </div>
       </div>
     </footer>
@@ -484,9 +344,8 @@ function App() {
       <Navbar />
       <main>
         <Hero />
-        <Services />
-        <Features />
-        <Pricing />
+        <TrendingAnime />
+        <AnimeNews />
       </main>
       <Footer />
     </>
